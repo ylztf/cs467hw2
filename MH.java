@@ -15,7 +15,6 @@ class MH {
 
 	public void register() {
 		currentCell.getLocalMHs().add(this);
-		currentCell.update();
 	}
 
 	public void move(MSS destination) {

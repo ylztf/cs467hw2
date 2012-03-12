@@ -29,10 +29,6 @@ class MSS {
 		return cellID;
 	}
 	
-	public void update() {
-		ntwk.update();
-	}
-	
 	public void addRequest(MH host) {
 		if(currentAlgorithm == INFORM)
 			add(host);
