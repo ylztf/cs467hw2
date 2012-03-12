@@ -15,14 +15,16 @@ public class TokenRingOperations extends JApplet implements ActionListener {
 	private JPanel controlPanel, controlPanel1;
 	private JList schemeList;
 	private JTextArea [] mssArea;
+	private ArrayList MSSlist;
+	private Network TRnet;
    
     public void init() {
 		//create the network
-        Network TRnet = new Network();
+        TRnet = new Network();
 
         //create some MSS
         //This is not very dynamic, but this also not what the project focuses on either
-        ArrayList MSSlist = new ArrayList();
+        MSSlist = new ArrayList();
         MSS cell_a = new MSS("Cell_A", TRnet);
         MSSlist.add(cell_a);
 
@@ -85,29 +87,29 @@ public class TokenRingOperations extends JApplet implements ActionListener {
 		controlPanel.add(schemeList);
 		
 		content.add(controlPanel, BorderLayout.NORTH);
+		
 		mssArea = new JTextArea[MSSlist.size()];
 		controlPanel1 = new JPanel();
 		
 		for(int i= 0; i<TRnet.getAllMSSs().size(); i++){
 			MSS cell = (MSS)TRnet.getAllMSSs().get(i);
-			mssArea[i].setRows(10);
-			mssArea[i].setColumns(10);
-			mssArea[i].setText("");
+			mssArea[i] = new JTextArea("", 10, 10);
 			mssArea[i].setVisible(true);
+			mssArea[i].setEditable(false);
 			controlPanel1.add(new JScrollPane(mssArea[i]));
-			mssArea[i].append(cell.getID());
-			for (int j=0; j<cell.getLocalMHs().size(); j++) {
-				mssArea[i].append( ((MH)cell.getLocalMHs().get(j)).getID()  );
-			}
 		}
+		
+		updateTextAreas();
+		log = new JTextArea("", 10, 10);
+		log.setVisible(true);
+		content.add(new JScrollPane(log), BorderLayout.SOUTH);
         content.add(controlPanel1, BorderLayout.CENTER);
-		content.add(new JLabel("dummy"), BorderLayout.SOUTH);
 
         //run a few tests of MSS facilitated token passing
-        mobile_1.request();   
-        mobile_2.request();
+        mobile_1.request(log);   
+        mobile_2.request(log);
         mobile_2.move(cell_c);
-        mobile_8.request();
+        mobile_8.request(log);
 
         //TRnet.traverse();
 		//MHsOnly algo = new MHsOnly(TRnet);
@@ -115,5 +117,23 @@ public class TokenRingOperations extends JApplet implements ActionListener {
 		Replication algo = new Replication(TRnet);
     }
 	
-	public void actionPerformed(ActionEvent e){}
+	public void actionPerformed(ActionEvent e) {
+		if(e.getSource() == moveButton) {
+			String movefrom = source.getText();
+			String moveto = destination.getText();
+			(TRnet.getMHByName(movefrom)).move(TRnet.getMSSByName(moveto));
+			updateTextAreas();
+		}
+	}
+	
+	public void updateTextAreas() {
+		for(int i= 0; i<TRnet.getAllMSSs().size(); i++){
+			MSS cell = (MSS)TRnet.getAllMSSs().get(i);
+			mssArea[i].append(cell.getID() + "\n--------\n");
+			
+			for (int j=0; j<cell.getLocalMHs().size(); j++) {
+				mssArea[i].append( ((MH)cell.getLocalMHs().get(j)).getID() + "\n");
+			}
+		}
+	}
 }

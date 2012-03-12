@@ -1,4 +1,5 @@
 import java.util.*;
+import javax.swing.*;
 
 class MSS {
 	//chose String for IDs instead of int, so it can be more expressive and user friendly
@@ -29,7 +30,7 @@ class MSS {
 		return cellID;
 	}
 	
-	public void addRequest(MH host) {
+	public void addRequest(MH host, JTextArea ta) {
 		if(currentAlgorithm == INFORM)
 			add(host);
 		else {
@@ -40,9 +41,9 @@ class MSS {
 				m.add(host);
 			}
 				
-			System.out.println(cellID + " sending request of " + host.getID() + " to all MSSs (cost of Cf for each)");
-			System.out.println("MSSs queue request for " + host.getID() + " and send priority to " + cellID + "(cost of Cf for each)");
-			System.out.println(cellID + " sending priority of " + requestQueue.indexOf(host) + " to all MSSs (cost of Cf for each)");
+			ta.append(cellID + " sending request of " + host.getID() + " to all MSSs (cost of Cf for each)\n");
+			ta.append("MSSs queue request for " + host.getID() + " and send priority to " + cellID + "(cost of Cf for each)\n");
+			ta.append(cellID + " sending priority of " + requestQueue.indexOf(host) + " to all MSSs (cost of Cf for each)\n");
 		}
 	}
 	
@@ -75,35 +76,35 @@ class MSS {
 		currentAlgorithm = a;
 	}
 
-	public void grantRequests() {
+	public void grantRequests(JTextArea ta) {
 		boolean local = false;
 		if(requestQueue.isEmpty() == false) {
 			grantingQueue = requestQueue;
 			requestQueue = new ArrayList();
 			for (int i = 0; i<grantingQueue.size(); i++) {
 				local = false;
-				System.out.println("Processing request from " + ((MH)grantingQueue.get(i)).getID());
+				ta.append("Processing request from " + ((MH)grantingQueue.get(i)).getID() + "\n");
 				for (int j = 0; j< localMHs.size(); j++) {
 					if (grantingQueue.get(i).equals(localMHs.get(j))) {
-						System.out.println("Only local search is needed ");
-						((MH)grantingQueue.get(i)).tokenUse();
+						ta.append("Only local search is needed \n");
+						((MH)grantingQueue.get(i)).tokenUse(ta);
 						local = true;                           
 					}
 				}
 				if (!local) {
-					System.out.println("Wide area search is needed ");
-					MSS location = ntwk.search(((MH)grantingQueue.get(i)).getID());
-					tokenPassFixedLink(location);
-					((MH)grantingQueue.get(i)).tokenUse();
-					location.tokenPassFixedLink(this);
+					ta.append("Wide area search is needed \n");
+					MSS location = ntwk.search(((MH)grantingQueue.get(i)).getID(), ta);
+					tokenPassFixedLink(location, ta);
+					((MH)grantingQueue.get(i)).tokenUse(ta);
+					location.tokenPassFixedLink(this, ta);
 				}
 				System.out.println();
 			}
 		}
 	}
 
-	void tokenPassFixedLink(MSS destination) {
-		System.out.println("Passing token from " + cellID + " to " + destination.getID());
+	void tokenPassFixedLink(MSS destination, JTextArea ta) {
+		ta.append("Passing token from " + cellID + " to " + destination.getID() + "\n");
 	}
 	
 	// these are so the MSSs know how to handle requests

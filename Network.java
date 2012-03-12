@@ -1,4 +1,5 @@
 import java.util.*;
+import javax.swing.*;
 
 class Network {
 	private ArrayList allMH;
@@ -23,6 +24,22 @@ class Network {
 
 	}
 	
+	public MH getMHByName(String name) {
+		for(int i = 0; i < allMH.size(); ++i)
+			if(((MH)allMH.get(i)).getID() == name)
+				return (MH)allMH.get(i);
+					
+		return  null;
+	}
+	
+	public MSS getMSSByName(String name) {
+		for(int i = 0; i < allMSS.size(); ++i)
+			if(((MSS)allMSS.get(i)).getID() == name)
+				return (MSS)allMSS.get(i);
+					
+		return  null;
+	}
+	
 	public void addMSS(MSS mss) {
 		allMSS.add(mss);
 	}
@@ -42,17 +59,17 @@ class Network {
 		}
 	}
 	
-	public MSS search(String mobileID) {
+	public MSS search(String mobileID, JTextArea ta) {
 		for (int i = 0; i < allMSS.size(); i++) {
 			ArrayList locals = ((MSS)allMSS.get(i)).getLocalMHs();
 			for (int j = 0; j<locals.size(); j++){
 				if(((MH)locals.get(j)).getID() == mobileID) {
-					System.out.println(mobileID + " is in " + ((MSS)allMSS.get(i)).getID());
+					ta.append(mobileID + " is in " + ((MSS)allMSS.get(i)).getID() + "\n");
 					return (MSS)allMSS.get(i);
 				}
 			}
 		}
-		System.out.println(mobileID + " not found");
+		ta.append(mobileID + " not found\n");
 		return null;
 	}
 

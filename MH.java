@@ -1,3 +1,5 @@
+import javax.swing.*;
+
 class MH {
 	//chose String for IDs instead of int, so it can be more expressive and user friendly
 	private String mobileID;
@@ -31,22 +33,22 @@ class MH {
 		return currentCell;
 	}
 
-	public void request() {
-		currentCell.addRequest(this);
+	public void request(JTextArea ta) {
+		currentCell.addRequest(this, ta);
 	}
 
-	public void passTokenToPeer(String peerID, MSS peerCell)  {
-		System.out.println("Token passed to " + peerID + " in " + peerCell.getID());
+	public void passTokenToPeer(String peerID, MSS peerCell, JTextArea ta)  {
+		ta.append("Token passed to " + peerID + " in " + peerCell.getID() + "\n");
 	}
 
-	public void tokenUse() {
-		System.out.println("Token received by " + mobileID + " from " + currentCell.getID() + " (cost is Cw)");
-		System.out.println("Using token.");
+	public void tokenUse(JTextArea ta) {
+		ta.append("Token received by " + mobileID + " from " + currentCell.getID() + " (cost is Cw)\n");
+		ta.append("Using token.\n");
 		
 		try {
 			Thread.sleep(2000); // simulate using token
 		} catch(InterruptedException e) {}
 		
-		System.out.println("Token released to " + currentCell.getID() + " (cost is Cw)");
+		ta.append("Token released to " + currentCell.getID() + " (cost is Cw)\n");
 	}
 }
