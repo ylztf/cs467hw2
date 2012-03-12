@@ -26,7 +26,7 @@ class Network {
 	
 	public MH getMHByName(String name) {
 		for(int i = 0; i < allMH.size(); ++i)
-			if(((MH)allMH.get(i)).getID() == name)
+			if(((MH)allMH.get(i)).getID().compareTo(name) == 0)
 				return (MH)allMH.get(i);
 					
 		return  null;
@@ -34,7 +34,7 @@ class Network {
 	
 	public MSS getMSSByName(String name) {
 		for(int i = 0; i < allMSS.size(); ++i)
-			if(((MSS)allMSS.get(i)).getID() == name)
+			if(((MSS)allMSS.get(i)).getID().compareTo(name) == 0)
 				return (MSS)allMSS.get(i);
 					
 		return  null;

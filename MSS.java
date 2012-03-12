@@ -4,7 +4,7 @@ import javax.swing.*;
 class MSS {
 	//chose String for IDs instead of int, so it can be more expressive and user friendly
 	private String cellID;
-	private int currentAlgorithm = REPLICATION;
+	private int currentAlgorithm = MH_ONLY;
 	private ArrayList localMHs;
 	private Network ntwk;
 	//when MSS receives a request, it puts it in the request queue.  When it's the MSS's turn to pass
@@ -110,4 +110,5 @@ class MSS {
 	// these are so the MSSs know how to handle requests
 	public static final int INFORM = 0;
 	public static final int REPLICATION = 1;
+	public static final int MH_ONLY = 2;
 }

@@ -17,6 +17,7 @@ public class TokenRingOperations extends JApplet implements ActionListener {
 	private JTextArea [] mssArea;
 	private ArrayList MSSlist;
 	private Network TRnet;
+	private int scheme;
    
     public void init() {
 		//create the network
@@ -104,17 +105,8 @@ public class TokenRingOperations extends JApplet implements ActionListener {
 		log.setVisible(true);
 		content.add(new JScrollPane(log), BorderLayout.SOUTH);
         content.add(controlPanel1, BorderLayout.CENTER);
-
-        //run a few tests of MSS facilitated token passing
-        mobile_1.request(log);   
-        mobile_2.request(log);
-        mobile_2.move(cell_c);
-        mobile_8.request(log);
-
-        //TRnet.traverse();
-		//MHsOnly algo = new MHsOnly(TRnet);
-		//Inform algo = new Inform(TRnet);
-		Replication algo = new Replication(TRnet);
+		
+		log.setText("");
     }
 	
 	public void actionPerformed(ActionEvent e) {
@@ -128,6 +120,7 @@ public class TokenRingOperations extends JApplet implements ActionListener {
 	
 	public void updateTextAreas() {
 		for(int i= 0; i<TRnet.getAllMSSs().size(); i++){
+			mssArea[i].setText("");
 			MSS cell = (MSS)TRnet.getAllMSSs().get(i);
 			mssArea[i].append(cell.getID() + "\n--------\n");
 			
