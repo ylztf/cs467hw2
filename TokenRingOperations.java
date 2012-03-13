@@ -2,11 +2,9 @@ import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import java.util.concurrent.*;
 
 public class TokenRingOperations extends JApplet implements ActionListener {
-   // public static void main(String[] args) {
-   //     new TokenRingOperations();
-   // }
    
 	private JButton startButton, stopButton, moveButton, requestButton;
 	private JTextField source, destination;
@@ -18,6 +16,7 @@ public class TokenRingOperations extends JApplet implements ActionListener {
 	private ArrayList MSSlist;
 	private Network TRnet;
 	private int scheme;
+	private Thread ringRunner;
    
     public void init() {
 		//create the network
@@ -72,6 +71,8 @@ public class TokenRingOperations extends JApplet implements ActionListener {
 		
 		String[] selections = {"MH's Only","Inform Strategy","Replication Strategy"};
 		schemeList = new JList(selections);
+		schemeList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		
 		source = new JTextField("Mobile ID", 10);
 		destination = new JTextField("destination", 10);
 		
@@ -109,12 +110,38 @@ public class TokenRingOperations extends JApplet implements ActionListener {
 		log.setText("");
     }
 	
+	// when someone clicks a button
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == moveButton) {
 			String movefrom = source.getText();
 			String moveto = destination.getText();
 			(TRnet.getMHByName(movefrom)).move(TRnet.getMSSByName(moveto));
 			updateTextAreas();
+		}
+		else if(e.getSource() == startButton) {
+			log.setText("");
+		
+			if(schemeList.getSelectedIndex() == -1)
+				log.append("no strategy selected\n");
+			else {
+				switch(schemeList.getSelectedIndex()) {
+					case MSS.MH_ONLY:
+						ringRunner = new Thread(new MHsOnly(TRnet, log));
+						ringRunner.start();
+						break;
+					case MSS.INFORM:
+						ringRunner = new Thread(new Inform(TRnet, log));
+						ringRunner.start();
+						break;
+					case MSS.REPLICATION:
+						ringRunner = new Thread(new Replication(TRnet, log));
+						ringRunner.start();
+						break;
+				}
+			}
+		}
+		else if(e.getSource() == stopButton) {
+			ringRunner.stop();
 		}
 	}
 	

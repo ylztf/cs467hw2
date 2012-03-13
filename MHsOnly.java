@@ -1,16 +1,13 @@
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import javax.swing.*;
 
 class MHsOnly implements Runnable {
 	private Network net;
+	JTextArea ta;
 	
-	public MHsOnly(Network n) {
+	public MHsOnly(Network n, JTextArea t) {
 		net = n;
-		
-		// will move this out soon
-		ExecutorService executor = Executors.newFixedThreadPool(1);
-		executor.execute(this);
+		ta = t;
 	}
 	
 	public void run() {
@@ -19,7 +16,7 @@ class MHsOnly implements Runnable {
 		//while(true) {		
 			for(int i = 0; i < allHosts.size(); ++i) {
 				MH currentHost = (MH)allHosts.get(i);
-				currentHost.tokenUse();
+				currentHost.tokenUse(ta);
 				
 				MH nextHost;
 				if(i + 1 == allHosts.size())
@@ -27,12 +24,12 @@ class MHsOnly implements Runnable {
 				else
 					nextHost = (MH)allHosts.get(i + 1);
 					
-				System.out.println(nextHost.getID() + " is next to use the token");
+				ta.append(nextHost.getID() + " is next to use the token\n");
 				
 				if(currentHost.getCurrentCell() != nextHost.getCurrentCell()) {
-					net.search(nextHost.getID()).getID();
-					System.out.println("(cost of search is Cs)");
-					System.out.println("moving token to " + nextHost.getCurrentCell().getID() + " (cost is Cf)");
+					net.search(nextHost.getID(), ta).getID();
+					ta.append("(cost of search is Cs)\n");
+					ta.append("moving token to " + nextHost.getCurrentCell().getID() + " (cost is Cf)\n");
 				}
 			}
 		//}

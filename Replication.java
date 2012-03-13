@@ -1,16 +1,13 @@
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import javax.swing.*;
 
 class Replication implements Runnable {
 	private Network net;
+	private JTextArea ta;
 	
-	public Replication(Network n) {
+	public Replication(Network n, JTextArea t) {
 		net = n;
-		
-		// will move this out soon
-		ExecutorService executor = Executors.newFixedThreadPool(1);
-		executor.execute(this);
+		ta = t;
 	}
 	
 	public void run() {
@@ -28,14 +25,14 @@ class Replication implements Runnable {
 				
 				if(currentMSS.hasPendingRequests()) {
 					MH host = (MH)currentMSS.getRequestQueue().get(0);
-					System.out.println(host.getID() + " is scheduled to get the token next");
-					if(net.search(host.getID()) != currentMSS)
-						System.out.println("sending token to " + host.getCurrentCell().getID());
+					ta.append(host.getID() + " is scheduled to get the token next\n");
+					if(net.search(host.getID(), ta) != currentMSS)
+						ta.append("sending token to " + host.getCurrentCell().getID() + "\n");
 					
-					host.tokenUse();
+					host.tokenUse(ta);
 					
 					net.globalRelease(host);
-					System.out.println(host.getCurrentCell().getID() + " sends global release to all other MSSs (cost is Cf for each)");
+					ta.append(host.getCurrentCell().getID() + " sends global release to all other MSSs (cost is Cf for each)\n");
 				}
 			}
 		}
@@ -47,19 +44,17 @@ class Replication implements Runnable {
 		
 		for (int i = 0; i < grantingQueue.size(); i++) {
 			MH currentMH = (MH)grantingQueue.get(i);
-			System.out.println(mss.getID() + " is processing request from " + ((MH)grantingQueue.get(i)).getID());
+			ta.append(mss.getID() + " is processing request from " + ((MH)grantingQueue.get(i)).getID() + "\n");
 			
-			MSS MHhome = net.search(currentMH.getID());
+			MSS MHhome = net.search(currentMH.getID(), ta);
 			if(MHhome == mss) { // local
-				System.out.println("no forwarding needed");
-				currentMH.tokenUse();                           
+				ta.append("no forwarding needed\n");
+				currentMH.tokenUse(ta);                           
 			} else {
-				System.out.println("need to forward token to " + MHhome.getID() + " (cost is Cf)");
-				currentMH.tokenUse();
-				System.out.println(MHhome + " sends token back to " + mss.getID() + " (cost is Cf)");
+				ta.append("need to forward token to " + MHhome.getID() + " (cost is Cf)\n");
+				currentMH.tokenUse(ta);
+				ta.append(MHhome + " sends token back to " + mss.getID() + " (cost is Cf)\n");
 			}
-			
-			System.out.println();
 		}
 	}
 }	

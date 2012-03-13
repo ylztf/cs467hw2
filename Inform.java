@@ -1,16 +1,13 @@
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import javax.swing.*;
 
 class Inform implements Runnable {
 	private Network net;
+	private JTextArea ta;
 	
-	public Inform(Network n) {
+	public Inform(Network n, JTextArea t) {
 		net = n;
-		
-		// will move this out soon
-		ExecutorService executor = Executors.newFixedThreadPool(1);
-		executor.execute(this);
+		ta = t;
 	}
 	
 	public void run() {
@@ -22,16 +19,16 @@ class Inform implements Runnable {
 			currentMSS.setAlgorithm(MSS.INFORM);
 		}
 			
-		while(true) {
+		//while(true) {
 			for(int i = 0; i < allMSSs.size(); ++i) {
 				currentMSS = (MSS)allMSSs.get(i);
 				
 				if(currentMSS.hasPendingRequests()) {
-					System.out.println("now servicing requests in " + currentMSS.getID());
+					ta.append("now servicing requests in " + currentMSS.getID() + "\n");
 					grantRequests(currentMSS);
 				}
 			}
-		}
+		//}
 	}
 	
 	public void grantRequests(MSS mss) {
@@ -40,19 +37,17 @@ class Inform implements Runnable {
 		
 		for (int i = 0; i < grantingQueue.size(); i++) {
 			MH currentMH = (MH)grantingQueue.get(i);
-			System.out.println(mss.getID() + " is processing request from " + ((MH)grantingQueue.get(i)).getID());
+			ta.append(mss.getID() + " is processing request from " + ((MH)grantingQueue.get(i)).getID() + "\n");
 			
-			MSS MHhome = net.search(currentMH.getID());
+			MSS MHhome = net.search(currentMH.getID(), ta);
 			if(MHhome == mss) { // local
-				System.out.println("no forwarding needed");
-				currentMH.tokenUse();                           
+				ta.append("no forwarding needed\n");
+				currentMH.tokenUse(ta);                           
 			} else {
-				System.out.println("need to forward token to " + MHhome.getID() + " (cost is Cf)");
-				currentMH.tokenUse();
-				System.out.println(MHhome.getID() + " sends token back to " + mss.getID() + " (cost is Cf)");
+				ta.append("need to forward token to " + MHhome.getID() + " (cost is Cf)\n");
+				currentMH.tokenUse(ta);
+				ta.append(MHhome.getID() + " sends token back to " + mss.getID() + " (cost is Cf)\n");
 			}
-			
-			System.out.println();
 		}
 	}
 }	

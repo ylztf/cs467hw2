@@ -108,7 +108,7 @@ class MSS {
 	}
 	
 	// these are so the MSSs know how to handle requests
-	public static final int INFORM = 0;
-	public static final int REPLICATION = 1;
-	public static final int MH_ONLY = 2;
+	public static final int INFORM = 1;
+	public static final int REPLICATION = 2;
+	public static final int MH_ONLY = 0;
 }
