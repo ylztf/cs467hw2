@@ -19,7 +19,7 @@ class Replication implements Runnable {
 			currentMSS.setAlgorithm(MSS.REPLICATION);
 		}
 			
-		while(true) {
+        //	while(true) {
 			for(int i = 0; i < allMSSs.size(); ++i) {
 				currentMSS = (MSS)allMSSs.get(i);
 				
@@ -35,7 +35,7 @@ class Replication implements Runnable {
 					ta.append(host.getCurrentCell().getID() + " sends global release to all other MSSs (cost is Cf for each)\n");
 				}
 			}
-		}
+            //	}
 	}
 	
 	public void grantRequests(MSS mss) {
