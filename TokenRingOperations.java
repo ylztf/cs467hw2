@@ -7,7 +7,7 @@ import java.util.concurrent.*;
 
 public class TokenRingOperations extends JApplet implements ActionListener, ListSelectionListener {
    
-	private JButton startButton, stopButton, moveButton, requestButton;
+	private JButton startButton, stopButton, moveButton, requestButton, clearButton;
 	private JTextField source, destination;
 	private JTextArea log;
 	private Container content;
@@ -60,6 +60,9 @@ public class TokenRingOperations extends JApplet implements ActionListener, List
 		startButton = new JButton("Start the Simulation");
 		startButton.addActionListener(this);
 		
+		clearButton = new JButton("Clear");
+		clearButton.addActionListener(this);
+		
 		requestButton = new JButton("Request the Token");
 		requestButton.addActionListener(this);
 		
@@ -77,6 +80,7 @@ public class TokenRingOperations extends JApplet implements ActionListener, List
 		JLabel label = new JLabel("to");
 		
 		controlPanel = new JPanel();
+		controlPanel.add(clearButton);
 		controlPanel.add(startButton);
 		controlPanel.add(moveButton);
 		controlPanel.add(requestButton);
@@ -116,8 +120,6 @@ public class TokenRingOperations extends JApplet implements ActionListener, List
 			updateTextAreas();
 		}
 		else if(e.getSource() == startButton) {
-			log.setText("");
-		
 			if(schemeList.getSelectedIndex() == -1)
 				log.append("no strategy selected\n");
 			else {
@@ -139,6 +141,9 @@ public class TokenRingOperations extends JApplet implements ActionListener, List
 		}
 		else if(e.getSource() == requestButton) {
 			TRnet.getMHByName(source.getText()).request(log);
+		}
+		else if(e.getSource() == clearButton) {
+			log.setText("");
 		}
 	}
 	

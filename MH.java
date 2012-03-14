@@ -21,7 +21,7 @@ class MH {
 
 	public void move(MSS destination, JTextArea ta) {
 		if(currentCell.getAlgorithm() == MSS.INFORM)
-			ta.append(mobileID + " is moved to " + destination.getID() + ". Informing " + currentCell.getID() + " of the move (cost is Cf)\n");
+			ta.append(mobileID + " is moved to " + destination.getID() + ". Informing " + currentCell.getID() + " of " + mobileID + "'s new position because it has a pending request (cost is Cf)\n");
 			
 		currentCell.getLocalMHs().remove(this);
 		currentCell = destination;
