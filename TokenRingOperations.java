@@ -2,9 +2,10 @@ import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.event.*;
 import java.util.concurrent.*;
 
-public class TokenRingOperations extends JApplet implements ActionListener {
+public class TokenRingOperations extends JApplet implements ActionListener, ListSelectionListener {
    
 	private JButton startButton, stopButton, moveButton, requestButton;
 	private JTextField source, destination;
@@ -15,8 +16,7 @@ public class TokenRingOperations extends JApplet implements ActionListener {
 	private JTextArea [] mssArea;
 	private ArrayList MSSlist;
 	private Network TRnet;
-	private int scheme;
-	private Thread ringRunner;
+	private Thread runner;
    
     public void init() {
 		//create the network
@@ -60,9 +60,6 @@ public class TokenRingOperations extends JApplet implements ActionListener {
 		startButton = new JButton("Start the Simulation");
 		startButton.addActionListener(this);
 		
-		stopButton = new JButton("Stop the simulation");
-		stopButton.addActionListener(this);
-		
 		requestButton = new JButton("Request the Token");
 		requestButton.addActionListener(this);
 		
@@ -72,6 +69,7 @@ public class TokenRingOperations extends JApplet implements ActionListener {
 		String[] selections = {"MH's Only","Inform Strategy","Replication Strategy"};
 		schemeList = new JList(selections);
 		schemeList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		schemeList.addListSelectionListener(this);
 		
 		source = new JTextField("Mobile ID", 10);
 		destination = new JTextField("destination", 10);
@@ -80,7 +78,6 @@ public class TokenRingOperations extends JApplet implements ActionListener {
 		
 		controlPanel = new JPanel();
 		controlPanel.add(startButton);
-		controlPanel.add(stopButton);
 		controlPanel.add(moveButton);
 		controlPanel.add(requestButton);
 		controlPanel.add(source);
@@ -115,7 +112,7 @@ public class TokenRingOperations extends JApplet implements ActionListener {
 		if(e.getSource() == moveButton) {
 			String movefrom = source.getText();
 			String moveto = destination.getText();
-			(TRnet.getMHByName(movefrom)).move(TRnet.getMSSByName(moveto));
+			(TRnet.getMHByName(movefrom)).move(TRnet.getMSSByName(moveto), log);
 			updateTextAreas();
 		}
 		else if(e.getSource() == startButton) {
@@ -126,23 +123,28 @@ public class TokenRingOperations extends JApplet implements ActionListener {
 			else {
 				switch(schemeList.getSelectedIndex()) {
 					case MSS.MH_ONLY:
-						ringRunner = new Thread(new MHsOnly(TRnet, log));
-						ringRunner.start();
+						runner = new Thread(new MHsOnly(TRnet, log));
+						runner.start();
 						break;
 					case MSS.INFORM:
-						ringRunner = new Thread(new Inform(TRnet, log));
-						ringRunner.start();
+						runner = new Thread(new Inform(TRnet, log));
+						runner.start();
 						break;
 					case MSS.REPLICATION:
-						ringRunner = new Thread(new Replication(TRnet, log));
-						ringRunner.start();
+						runner = new Thread(new Replication(TRnet, log));
+						runner.start();
 						break;
 				}
 			}
 		}
-		else if(e.getSource() == stopButton) {
-			ringRunner.stop();
+		else if(e.getSource() == requestButton) {
+			TRnet.getMHByName(source.getText()).request(log);
 		}
+	}
+	
+	// when someone selects a scheme from the list
+	public void valueChanged(ListSelectionEvent e) {
+		TRnet.setAlgorithm(schemeList.getSelectedIndex());
 	}
 	
 	public void updateTextAreas() {

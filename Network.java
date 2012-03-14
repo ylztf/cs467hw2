@@ -72,6 +72,11 @@ class Network {
 		ta.append(mobileID + " not found\n");
 		return null;
 	}
+	
+	public void setAlgorithm(int a) {
+		for(int i = 0; i < allMSS.size(); i++)
+			((MSS)allMSS.get(i)).setAlgorithm(a);
+	}
 
 	/*public void traverse() {
 		for (int i = 0; i<allMSS.size(); i++) {

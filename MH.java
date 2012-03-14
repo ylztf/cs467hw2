@@ -19,7 +19,10 @@ class MH {
 		currentCell.getLocalMHs().add(this);
 	}
 
-	public void move(MSS destination) {
+	public void move(MSS destination, JTextArea ta) {
+		if(currentCell.getAlgorithm() == MSS.INFORM)
+			ta.append(mobileID + " is moved to " + destination.getID() + ". Informing " + currentCell.getID() + " of the move (cost is Cf)\n");
+			
 		currentCell.getLocalMHs().remove(this);
 		currentCell = destination;
 		register();

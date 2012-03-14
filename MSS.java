@@ -31,19 +31,27 @@ class MSS {
 	}
 	
 	public void addRequest(MH host, JTextArea ta) {
-		if(currentAlgorithm == INFORM)
-			add(host);
-		else {
-			ArrayList list = ntwk.getAllMSSs();
-			MSS m;
-			for(int i = 0; i < list.size(); ++i) {
-				m = (MSS)list.get(i);
-				m.add(host);
+		if(!requestQueue.contains(host)) {
+			if(currentAlgorithm == MH_ONLY) 
+				return;
+			
+			ta.append(host.getID() + " sent request to " + cellID + " (cost is Cw)\n");
+			
+			if(currentAlgorithm == INFORM) {
+				add(host);
 			}
+			else if(currentAlgorithm == REPLICATION){
+				ArrayList list = ntwk.getAllMSSs();
+				MSS m;
+				for(int i = 0; i < list.size(); ++i) {
+					m = (MSS)list.get(i);
+					m.add(host);
+				}
 				
-			ta.append(cellID + " sending request of " + host.getID() + " to all MSSs (cost of Cf for each)\n");
-			ta.append("MSSs queue request for " + host.getID() + " and send priority to " + cellID + "(cost of Cf for each)\n");
-			ta.append(cellID + " sending priority of " + requestQueue.indexOf(host) + " to all MSSs (cost of Cf for each)\n");
+				ta.append(cellID + " sending request of " + host.getID() + " to all MSSs (cost of Cf for each)\n");
+				ta.append("MSSs queue request for " + host.getID() + " and send priority to " + cellID + "(cost of Cf for each)\n");
+				ta.append(cellID + " sending priority of " + requestQueue.indexOf(host) + " to all MSSs (cost of Cf for each)\n");
+			}
 		}
 	}
 	
@@ -70,6 +78,10 @@ class MSS {
 	public void prepareRequests() {
 		grantingQueue = (ArrayList)requestQueue.clone();
 		requestQueue.clear();
+	}
+	
+	public int getAlgorithm() {
+		return currentAlgorithm;
 	}
 	
 	public void setAlgorithm(int a) {
