@@ -63,7 +63,7 @@ public class TokenRingOperations extends JApplet implements ActionListener, List
 		requestButton = new JButton("Request the Token");
 		requestButton.addActionListener(this);
 		
-		moveButton = new JButton("Move MH's");
+		moveButton = new JButton("Move MH");
 		moveButton.addActionListener(this);
 		
 		String[] selections = {"MH's Only","Inform Strategy","Replication Strategy"};
@@ -101,8 +101,8 @@ public class TokenRingOperations extends JApplet implements ActionListener, List
 		updateTextAreas();
 		log = new JTextArea("", 10, 10);
 		log.setVisible(true);
-		content.add(new JScrollPane(log), BorderLayout.SOUTH);
-        content.add(controlPanel1, BorderLayout.CENTER);
+		content.add(new JScrollPane(log), BorderLayout.CENTER);
+        content.add(controlPanel1, BorderLayout.SOUTH);
 		
 		log.setText("");
     }
